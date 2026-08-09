@@ -7,8 +7,8 @@ import argparse
 import importlib
 
 
-EXPECTED_VERSION = "4.9.0.post2"
-EXPECTED_MFEM_SHA = "ac454cb762e9711d9922f6441c496eb7d659d158"
+EXPECTED_VERSION = "4.9.0.post3"
+EXPECTED_MFEM_SHA = "45d44cbc0797ed0109d3c79efdbc42a48d3c906e"
 
 
 def main() -> None:
@@ -38,6 +38,13 @@ def main() -> None:
     assert normal_jump._coeff is coefficient
 
     assert hasattr(mfem.ParFiniteElementSpace, "SupportsVectorL2FaceRestriction")
+
+    # The CPU package must support the 11 basis points and 16 face quadrature
+    # points required by the degree-10 dealiased DG rule.
+    assert mfem.FaceQuadratureInterpolator.GetMaxND1D() == 16
+    assert mfem.FaceQuadratureInterpolator.GetMaxNQ1D() == 16
+    assert mfem.FaceQuadratureInterpolator.SupportsTensorFaceSize(11, 16)
+    assert not mfem.FaceQuadratureInterpolator.SupportsTensorFaceSize(17, 16)
 
     # Configuring the CEED CPU backend is a runtime check, not just a symbol check.
     device = mfem.Device("ceed-cpu")
