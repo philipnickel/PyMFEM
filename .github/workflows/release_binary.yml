@@ -106,7 +106,8 @@ jobs:
         shell: bash
         run: |
           while IFS= read -r package; do
-            pixi run rattler-build publish "$package" \
-              --to "https://prefix.dev/${PREFIX_CHANNEL}" \
-              --generate-attestation
+            pixi run rattler-build upload prefix \
+              --channel "${PREFIX_CHANNEL}" \
+              --generate-attestation \
+              "$package"
           done < <(find packages -type f -name '*.conda' -print | sort)
