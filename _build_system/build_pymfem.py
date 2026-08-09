@@ -120,7 +120,7 @@ def write_setup_local():
     os.chdir(pwd)
 
 
-def generate_wrapper(do_parallel):
+def generate_wrapper(do_parallel, do_serial=True):
     '''
     run swig.
     '''
@@ -184,64 +184,70 @@ def generate_wrapper(do_parallel):
 
     swigflag = '-Wall -c++ -python -std=c++17 -fastproxy -olddefs -keyword'.split(' ')
 
-    pwd = chdir(os.path.join(rootdir, 'mfem', '_ser'))
+    pwd = os.getcwd()
 
-    serflag = ['-I' + os.path.join(mfemser, 'include'),
-               '-I' + os.path.join(mfemser, 'include', 'mfem'),
-               '-I' + os.path.abspath(bglb.mfem_source)]
-    if bglb.enable_suitesparse:
-        serflag.append('-I' + os.path.join(bglb.suitesparse_prefix,
-                                           'include', 'suitesparse'))
+    if do_serial:
+        chdir(os.path.join(rootdir, 'mfem', '_ser'))
 
-    for filename in ['lininteg.i', 'bilininteg.i']:
-        command = [swig_command] + swigflag + serflag + [filename]
-        make_call(command)
-    update_integrator_exts()
+        serflag = ['-I' + os.path.join(mfemser, 'include'),
+                   '-I' + os.path.join(mfemser, 'include', 'mfem'),
+                   '-I' + os.path.abspath(bglb.mfem_source)]
+        if bglb.enable_suitesparse:
+            serflag.append('-I' + os.path.join(bglb.suitesparse_prefix,
+                                               'include', 'suitesparse'))
 
-    commands = []
-    for filename in ifiles():
-        if not check_new(filename):
-            continue
-        command = [swig_command] + swigflag + serflag + [filename]
-        commands.append(command)
+        for filename in ['lininteg.i', 'bilininteg.i']:
+            command = [swig_command] + swigflag + serflag + [filename]
+            make_call(command)
+        update_integrator_exts()
 
-    mp_pool = Pool(max((cpu_count() - 1, 1)))
-    with mp_pool:
-        mp_pool.map(subprocess.run, commands)
+        commands = []
+        for filename in ifiles():
+            if not check_new(filename):
+                continue
+            command = [swig_command] + swigflag + serflag + [filename]
+            commands.append(command)
 
-    if not do_parallel:
-        os.chdir(pwd)
-        return
+        mp_pool = Pool(max((cpu_count() - 1, 1)))
+        with mp_pool:
+            mp_pool.map(subprocess.run, commands)
 
-    chdir(os.path.join(rootdir, 'mfem', '_par'))
+    if do_parallel:
+        chdir(os.path.join(rootdir, 'mfem', '_par'))
 
-    parflag = ['-I' + os.path.join(mfempar, 'include'),
-               '-I' + os.path.join(mfempar, 'include', 'mfem'),
-               '-I' + os.path.abspath(bglb.mfem_source),
-               '-I' + os.path.join(bglb.hypre_prefix, 'include'),
-               '-I' + os.path.join(bglb.metis_prefix, 'include'),
-               '-I' + get_mpi4py_inc()]
+        parflag = ['-I' + os.path.join(mfempar, 'include'),
+                   '-I' + os.path.join(mfempar, 'include', 'mfem'),
+                   '-I' + os.path.abspath(bglb.mfem_source),
+                   '-I' + os.path.join(bglb.hypre_prefix, 'include'),
+                   '-I' + os.path.join(bglb.metis_prefix, 'include'),
+                   '-I' + get_mpi4py_inc()]
 
-    if bglb.enable_pumi:
-        parflag.append('-I' + os.path.join(bglb.pumi_prefix, 'include'))
-    if bglb.enable_strumpack:
-        parflag.append('-I' + os.path.join(bglb.strumpack_prefix, 'include'))
-    if bglb.enable_suitesparse:
-        parflag.append('-I' + os.path.join(bglb.suitesparse_prefix,
-                                           'include', 'suitesparse'))
+        if bglb.enable_pumi:
+            parflag.append('-I' + os.path.join(bglb.pumi_prefix, 'include'))
+        if bglb.enable_strumpack:
+            parflag.append('-I' + os.path.join(bglb.strumpack_prefix, 'include'))
+        if bglb.enable_suitesparse:
+            parflag.append('-I' + os.path.join(bglb.suitesparse_prefix,
+                                               'include', 'suitesparse'))
 
-    commands = []
-    for filename in ifiles():
-        if filename == 'strumpack.i' and not bglb.enable_strumpack:
-            continue
-        if not check_new(filename):
-            continue
-        command = [swig_command] + swigflag + parflag + [filename]
-        commands.append(command)
+        if not do_serial:
+            for filename in ['lininteg.i', 'bilininteg.i']:
+                command = [swig_command] + swigflag + parflag + [filename]
+                make_call(command)
+            update_integrator_exts()
 
-    mp_pool = Pool(max((cpu_count() - 1, 1)))
-    with mp_pool:
-        mp_pool.map(subprocess.run, commands)
+        commands = []
+        for filename in ifiles():
+            if filename == 'strumpack.i' and not bglb.enable_strumpack:
+                continue
+            if not check_new(filename):
+                continue
+            command = [swig_command] + swigflag + parflag + [filename]
+            commands.append(command)
+
+        mp_pool = Pool(max((cpu_count() - 1, 1)))
+        with mp_pool:
+            mp_pool.map(subprocess.run, commands)
 
     os.chdir(pwd)
 

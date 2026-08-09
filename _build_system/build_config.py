@@ -344,7 +344,8 @@ def configure_install(self):
 
     else:
         bglb.mfem_outside = False
-        bglb.build_mfem = True
+        # A parallel-only wheel does not need the separate serial MFEM library.
+        bglb.build_mfem = bglb.build_serial
         bglb.build_mfemp = bglb.build_parallel
         bglb.build_hypre = bglb.build_parallel
         bglb.build_metis = bglb.build_parallel or bglb.enable_suitesparse

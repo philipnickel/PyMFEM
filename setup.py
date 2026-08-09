@@ -206,7 +206,7 @@ class BuildPy(_build_py):
         if bglb.clean_swig:
             clean_wrapper()
         if bglb.run_swig:
-            generate_wrapper(bglb.run_swig_parallel)
+            generate_wrapper(bglb.run_swig_parallel, bglb.build_serial)
 
         if bglb.build_serial:
             make_mfem_wrapper(serial=True)
