@@ -1,0 +1,84 @@
+context:
+  version: 4.9.0.post1
+
+package:
+  name: pymfem-dgns
+  version: ${{ version }}
+
+source:
+  path: ..
+
+build:
+  number: 0
+  script:
+    - if: osx
+      then: export MACOSX_DEPLOYMENT_TARGET=13.0
+    - export PYMFEM_BUILD_NCPU="${PYMFEM_BUILD_NCPU:-2}"
+    - $PYTHON -m pip install . --no-deps --no-build-isolation -vv -Cwith-parallel=Yes -Cno-serial=Yes -Cwith-libceed=Yes -Cmfem-miniapps=No -CMPICC=$PREFIX/bin/mpicc -CMPICXX=$PREFIX/bin/mpicxx
+
+requirements:
+  build:
+    - ${{ compiler('c') }}
+    - ${{ compiler('cxx') }}
+    - if: linux
+      then: gcc_linux-64 14.*
+    - if: linux
+      then: gxx_linux-64 14.*
+    - cmake >=4
+    - git
+    - make
+    - pkg-config
+    - swig 4.4.*
+  host:
+    - python 3.12.*
+    - pip >=25.1
+    - setuptools >=80
+    - wheel
+    - packaging
+    - numpy >=2,<3
+    - scipy
+    - numba
+    - openmpi 5.0.10.*
+    - mpi4py 4.1.2.*
+    - zlib
+  run:
+    - python >=3.12,<3.13
+    - numpy >=2,<3
+    - scipy
+    - numba
+    - openmpi 5.0.10.*
+    - mpi4py 4.1.2.*
+    - zlib
+
+tests:
+  - python:
+      imports:
+        - mfem.par
+      pip_check: true
+      python_version: 3.12.*
+  - script:
+      - python ci/validate_install.py par
+      - env OMPI_MCA_rmaps_base_oversubscribe=1 mpiexec -n 2 python ci/mpi_smoke.py
+      - python ci/inspect_native.py
+    files:
+      source:
+        - ci/validate_install.py
+        - ci/mpi_smoke.py
+        - ci/inspect_native.py
+
+about:
+  homepage: https://github.com/philipnickel/PyMFEM
+  repository: https://github.com/philipnickel/PyMFEM
+  documentation: https://pymfem.readthedocs.io/
+  license: BSD-3-Clause
+  license_file: LICENSE
+  summary: Parallel-only patched PyMFEM build for DGNS
+  description: |
+    PyMFEM 4.9 with a pinned patched MFEM 4.9, HYPRE, METIS, and libCEED.
+    OpenMPI and mpi4py are supplied by Conda-forge.
+
+extra:
+  mfem_commit: ac454cb762e9711d9922f6441c496eb7d659d158
+  supported_platforms:
+    - linux-64
+    - osx-arm64

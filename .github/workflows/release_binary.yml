@@ -1,92 +1,112 @@
-name: release_binary
+name: Publish DGNS Conda packages
 
 on:
+  workflow_dispatch:
   push:
-    #branches: [ action_test ]
-    tags: ["v*"]
+    tags:
+      - 'dgns-v*'
+
+permissions:
+  contents: read
+
+env:
+  PREFIX_CHANNEL: philipnickel-dgns
+  RELEASE_VERSION: 4.9.0.post1
 
 jobs:
-  make_sdist:
-    runs-on: ubuntu-latest
-    container: quay.io/pypa/manylinux2014_x86_64
-    steps:
-      - name: build_sdist
-        run: |
-          echo This job does not specify a container.
-          echo It runs directly on the virtual machine.
-          #
-          git clone https://github.com/mfem/PyMFEM.git
-          cd PyMFEM
-          #
-          REF=$(echo ${GITHUB_REF#refs/heads/})
-          echo "!!!!!: "$REF
-          git checkout $REF
-          #
-          export PATH=/opt/python/cp39-cp39/bin:$PATH
-
-          pip install setuptools
-          pip install -U packaging
-          pip3 install wheel six auditwheel twine
-          pip3 install urllib3==1.26.6    # use older version to avoid OpenSSL vesion issue
-          pip3 install numpy==1.21.6
-          #if [ -f requirements.txt ]; then
-          #   pip3 install -r requirements.txt
-          #fi
-
-          rm -rf dist/*
-          python3 setup.py sdist
-          ls -l dist/
-          #python3 -m twine upload --repository-url https://test.pypi.org/legacy/ --password ${{ secrets.TEST_PYPI_TOKEN }} --username __token__ --verbose dist/*
-          python3 -m twine upload --password ${{ secrets.PYPI_TOKEN }} --username __token__ --verbose dist/*
-  make_binary_3_10_11_12_13_14:
-    needs: make_sdist
+  build:
+    name: ${{ matrix.target-platform }} | Python 3.12 | MPI + libCEED
     strategy:
+      fail-fast: false
       matrix:
-        pythonpath: ["cp310-cp310", "cp311-cp311", "cp312-cp312", "cp313-cp313", "cp314-cp314"]
+        include:
+          - runner: ubuntu-22.04
+            target-platform: linux-64
+          - runner: macos-14
+            target-platform: osx-arm64
+    runs-on: ${{ matrix.runner }}
+    env:
+      PYMFEM_BUILD_NCPU: '2'
+      MACOSX_DEPLOYMENT_TARGET: '13.0'
 
-    runs-on: ubuntu-latest
-    container: quay.io/pypa/manylinux2014_x86_64
-    #container: node:10.16-jessie
     steps:
-      - name: build package
+      - name: Checkout the triggering fork
+        uses: actions/checkout@v4
+
+      - name: Install the locked package builder
+        uses: prefix-dev/setup-pixi@f00437f565399d418b0acc85936d12c1fb668347
+        with:
+          pixi-version: v0.73.0
+          frozen: true
+          cache: true
+
+      - name: Validate the release tag
+        if: github.ref_type == 'tag'
+        shell: bash
         run: |
-          echo It runs in the container instead of the VM.
-          #
-          git clone https://github.com/mfem/PyMFEM.git
-          cd PyMFEM
-          #
-          REF=$(echo ${GITHUB_REF#refs/heads/})
-          echo "!!!!!!: "$REF
-          git checkout $REF
-          #
-          ls -l /opt/python/
-          export PATH=/opt/python/${{ matrix.pythonpath }}/bin:$PATH
+          expected="dgns-v${RELEASE_VERSION}"
+          test "$GITHUB_REF_NAME" = "$expected" || {
+            echo "Tag $GITHUB_REF_NAME does not match recipe version $expected" >&2
+            exit 1
+          }
 
-          pip install setuptools
-          pip install -U packaging
-          pip3 install auditwheel twine
-          pip3 install urllib3==1.26.6    # use older version to avoid OpenSSL vesion issue
+      - name: Render the recipe
+        run: pixi run rattler-build build --recipe recipe/recipe.yaml --target-platform ${{ matrix.target-platform }} --render-only --with-solve
 
-          CWD=$PWD
-          yum install -y zlib-devel
-          #yum install -y chrpath
+      - name: Build and test the Conda package
+        run: pixi run rattler-build build --recipe recipe/recipe.yaml --target-platform ${{ matrix.target-platform }} --channel conda-forge --output-dir output --package-format conda --error-prefix-in-binary
 
-          mkdir dist
+      - name: Upload native package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pymfem-dgns-${{ matrix.target-platform }}
+          path: output/${{ matrix.target-platform }}/*.conda
+          if-no-files-found: error
+          retention-days: 7
 
-          # build wheel and check it
-          python3 -m pip wheel ./ --verbose --no-deps
-          pip3 install *.whl
-          cd test
-          python run_examples.py -serial -verbose -ex ex1
-          cd ..
+  publish:
+    name: Publish immutable packages to Prefix.dev
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      id-token: write
 
-          rm -rf dist/*
-          export LD_LIBRARY_PATH=${CWD}/external/mfem/cmbuild_ser/:$LD_LIBRARY_PATH
+    steps:
+      - name: Checkout packaging configuration
+        uses: actions/checkout@v4
 
-          auditwheel repair *.whl
-          rm -rf dist/*
-          mv wheelhouse/* dist/
+      - name: Install the locked package publisher
+        uses: prefix-dev/setup-pixi@f00437f565399d418b0acc85936d12c1fb668347
+        with:
+          pixi-version: v0.73.0
+          frozen: true
+          cache: true
 
-          ls -l dist/
-          #python3 -m twine upload --repository-url https://test.pypi.org/legacy/ --password ${{ secrets.TEST_PYPI_TOKEN }} --username __token__ --verbose dist/*
-          python3 -m twine upload --password ${{ secrets.PYPI_TOKEN }} --username __token__ --verbose dist/*
+      - name: Download both native packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: pymfem-dgns-*
+          path: packages
+          merge-multiple: true
+
+      - name: Validate the release set
+        shell: bash
+        run: |
+          mapfile -t packages < <(find packages -type f -name '*.conda' -print | sort)
+          test "${#packages[@]}" -eq 2 || {
+            printf 'Expected two packages, found %s\n' "${#packages[@]}" >&2
+            printf '%s\n' "${packages[@]}" >&2
+            exit 1
+          }
+          printf '%s\n' "${packages[@]}"
+
+      - name: Publish with trusted OIDC identity and attestations
+        shell: bash
+        run: |
+          while IFS= read -r package; do
+            pixi run rattler-build publish "$package" \
+              --to "https://prefix.dev/${PREFIX_CHANNEL}" \
+              --generate-attestation
+          done < <(find packages -type f -name '*.conda' -print | sort)
