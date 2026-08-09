@@ -1,8 +1,8 @@
 # DGNS Conda releases
 
 This branch publishes the patched MFEM/PyMFEM stack as immutable Conda
-packages on the public Prefix.dev channel `philipnickel-dgns`. The supported
-binary contract is:
+packages on the public Prefix.dev channel
+`philipnickel/philipnickel-dgns`. The supported binary contract is:
 
 - CPython 3.12
 - Linux x86-64 and macOS ARM64 (minimum macOS 13)
@@ -25,7 +25,7 @@ Before the first tagged run, create the public Prefix.dev channel
 `philipnickel/PyMFEM` and workflow file `release_binary.yml`. The workflow uses
 GitHub OIDC and stores no Prefix.dev API token. Publishing uses the fully
 qualified channel reference `philipnickel/philipnickel-dgns`; consumers use
-the public channel URL `https://prefix.dev/philipnickel-dgns`.
+the public channel URL `https://prefix.dev/philipnickel/philipnickel-dgns`.
 
 Published packages are immutable. For a change after `post2`, update the
 package and Python versions, the exact MFEM commit if needed, the validation
