@@ -8,13 +8,13 @@
 #include "../common/pyoperator.hpp"
 #include "../common/pyintrules.hpp"
 #include "../common/pynonlininteg.hpp"
+#include "numpy/arrayobject.h"
 using namespace mfem;
 %}
-/*
+
 %init %{
 import_array1(-1);
 %}
-*/
 /*
 %exception {
     try { $action }
