@@ -276,6 +276,10 @@ namespace mfem {
     self._coeff = args
 %}
 
+%pythonappend VectorNormalJumpIntegrator::VectorNormalJumpIntegrator %{
+    self._coeff = q
+%}
+
 %pythonappend NonconservativeDGTraceIntegrator::NonconservativeDGTraceIntegrator %{
     self._coeff = args
 %}
