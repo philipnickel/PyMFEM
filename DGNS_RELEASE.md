@@ -11,21 +11,23 @@ binary contract is:
 - bundled MFEM, HYPRE, METIS, and libCEED
 
 The Conda package is named `pymfem-dgns`; it installs the normal `mfem` Python
-module. The package version is `4.9.0.post1`. PyMFEM clones
+module. The package version is `4.9.0.post2`. PyMFEM clones
 `philipnickel/mfem` at the exact commit recorded in
 `_build_system/build_consts.py`, so a moving branch is never used.
 
 Run `pixi run build-conda` to reproduce and test a native package locally.
-Pushing `dgns-v4.9.0.post1` builds both supported platforms and publishes them
+Pushing `dgns-v4.9.0.post2` builds both supported platforms and publishes them
 through `.github/workflows/release_binary.yml`. Manual workflow dispatches
 perform both builds without publishing.
 
 Before the first tagged run, create the public Prefix.dev channel
 `philipnickel-dgns` and add a GitHub trusted publisher for repository
 `philipnickel/PyMFEM` and workflow file `release_binary.yml`. The workflow uses
-GitHub OIDC and stores no Prefix.dev API token.
+GitHub OIDC and stores no Prefix.dev API token. Publishing uses the fully
+qualified channel reference `philipnickel/philipnickel-dgns`; consumers use
+the public channel URL `https://prefix.dev/philipnickel-dgns`.
 
-Published packages are immutable. For a change after `post1`, update the
+Published packages are immutable. For a change after `post2`, update the
 package and Python versions, the exact MFEM commit if needed, the validation
-constants in `ci/`, and the expected release tag. Publish `post2` (or later)
+constants in `ci/`, and the expected release tag. Publish `post3` (or later)
 instead of overwriting an existing package.

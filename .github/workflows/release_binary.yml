@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 env:
-  PREFIX_CHANNEL: philipnickel-dgns
-  RELEASE_VERSION: 4.9.0.post1
+  PREFIX_CHANNEL: philipnickel/philipnickel-dgns
+  RELEASE_VERSION: 4.9.0.post2
 
 jobs:
   build:
