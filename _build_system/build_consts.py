@@ -56,12 +56,12 @@ if swig_command is None:
 release = namedtuple('Release', ['version', 'hash', 'tarball'])
 REPOS = dict(
     mfem=dict(
-        url="https://github.com/mfem/mfem.git",
+        url="https://github.com/philipnickel/mfem.git",
         # version, hash, tarball
         releases=[
             release("4.7", "dc9128ef596e84daf1138aa3046b826bba9d259f", None),
             release("4.8", "a01719101027383954b69af1777dc828bf795d62", None),
-            release("4.9", "d9d6526cc1749980a2ba1da16e2c1ca1e07d82ec", None),
+            release("4.9.0.post1", "ac454cb762e9711d9922f6441c496eb7d659d158", None),
         ]
     ),
     metis=dict(
