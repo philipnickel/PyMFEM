@@ -11,7 +11,7 @@ permissions:
 
 env:
   PREFIX_CHANNEL: philipnickel/philipnickel-dgns
-  RELEASE_VERSION: 4.9.0.post4
+  RELEASE_VERSION: 4.9.0.post5
 
 jobs:
   build:

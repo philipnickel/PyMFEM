@@ -7,8 +7,8 @@ import argparse
 import importlib
 
 
-EXPECTED_VERSION = "4.9.0.post4"
-EXPECTED_MFEM_SHA = "22802ec263f494c4c6ae25fbb767af08c575e37e"
+EXPECTED_VERSION = "4.9.0.post5"
+EXPECTED_MFEM_SHA = "904eaf9ac849b94f77af8e29dba85862369f4af9"
 
 
 def main() -> None:
@@ -24,6 +24,7 @@ def main() -> None:
     mfem = importlib.import_module(f"mfem.{args.mode}")
     required_symbols = (
         "ALEConvectionBoundaryIntegrator",
+        "ALEConvectionInteriorIntegrator",
         "DGMassInverse",
         "DGMassInversePreconditioner",
         "DGDiffusionIntegrator",
