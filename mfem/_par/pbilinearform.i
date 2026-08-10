@@ -5,6 +5,7 @@
 %{
 //#include <mpi.h>
 #include "mfem.hpp"
+#include "fem/dgmassinv.hpp"
 #include "numpy/arrayobject.h"
 #include "../common/pyoperator.hpp"
 #include "../common/pycoefficient.hpp"
@@ -94,4 +95,3 @@ P_FORM_SYSTEM_MATRIX_WRAP(mfem::SparseMatrix)
 #ifdef MFEM_USE_PETSC
   P_FORM_SYSTEM_MATRIX_WRAP(mfem::PetscParMatrix)
 #endif
-

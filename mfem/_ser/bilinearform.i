@@ -4,6 +4,7 @@
 %module(package="mfem._ser", directors="1")  bilinearform
 %{
 #include "fem/bilinearform.hpp"
+#include "fem/dgmassinv.hpp"
 #include "numpy/arrayobject.h"
 #include "../common/io_stream.hpp"  
 #include "../common/pyoperator.hpp"
@@ -119,6 +120,15 @@ namespace mfem {
     self._integrators.append(di)
     di.thisown=0
     %}
+%pythonappend DGMassInverse::DGMassInverse %{
+    # The native object retains the mesh behind fes and, for overloads that
+    # take them, coefficient/integration-rule pointers.
+    self._link = args
+   %}
+%pythonappend DGMassInversePreconditioner::DGMassInversePreconditioner %{
+    # The adapter is deliberately non-owning.
+    self._link = inverse_
+   %}
 } //end of namespace
 
 /* define BilinearFormPtrArray */
@@ -137,6 +147,7 @@ IGNORE_ARRAY_METHODS(mfem::BilinearForm *)
 INSTANTIATE_ARRAY0(BilinearForm *, BilinearForm, 1)
 
 %include "fem/bilinearform.hpp"
+%include "fem/dgmassinv.hpp"
 
 // instatitate template methods
 %define FORM_SYSTEM_MATRIX_WRAP(OsType)

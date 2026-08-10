@@ -280,6 +280,12 @@ namespace mfem {
     self._coeff = q
 %}
 
+%pythonappend VectorDivDivIntegrator::GetElementCoefficient %{
+    # The returned Vector is a non-owning view of storage held by the
+    # integrator. Keep its owner alive for as long as the Python proxy exists.
+    val._link = self
+%}
+
 %pythonappend NonconservativeDGTraceIntegrator::NonconservativeDGTraceIntegrator %{
     self._coeff = args
 %}

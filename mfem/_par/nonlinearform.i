@@ -5,6 +5,7 @@
 %{
 #include <mpi.h>
 #include "mfem.hpp"
+#include "fem/dgmassinv.hpp"
 #include "numpy/arrayobject.h"
 #include "../common/pyoperator.hpp"
 #include "../common/pycoefficient.hpp"
@@ -77,4 +78,3 @@ LIST_TO_MFEMOBJ_ARRAY_IN(mfem::Array<mfem::Vector *> &rhs, mfem::Vector *)
       return  dynamic_cast<mfem::SparseMatrix *>(&$self->GetGradient(x));
   }
 };
-

@@ -4,6 +4,7 @@
 %module(package="mfem._ser", directors="1") tmop_tools
 %{
 #include "mfem.hpp"
+#include "fem/dgmassinv.hpp"
 #include "numpy/arrayobject.h"
 #include "../common/pyoperator.hpp"
 #include "../common/pycoefficient.hpp"

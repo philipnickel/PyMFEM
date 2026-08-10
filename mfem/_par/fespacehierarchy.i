@@ -10,6 +10,7 @@
 %feature("autodoc", "1");
 %{
 #include "mfem.hpp"
+#include "fem/dgmassinv.hpp"
 #include "numpy/arrayobject.h"
 #include "../common/pyoperator.hpp"
 #include "../common/pycoefficient.hpp"

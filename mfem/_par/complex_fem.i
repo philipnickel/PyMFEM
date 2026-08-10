@@ -10,6 +10,7 @@
 %feature("autodoc", "1");
 %{
 #include "fem/complex_fem.hpp"
+#include "fem/dgmassinv.hpp"
 #include "linalg/complex_operator.hpp"
 #include "numpy/arrayobject.h"
 #include "../common/io_stream.hpp"
@@ -46,4 +47,3 @@ ISTREAM_TYPEMAP(std::istream&)
 %include "fem/complex_fem.hpp"
 
 OSTREAM_ADD_DEFAULT_FILE(ParComplexGridFunction, Save)
-

@@ -10,6 +10,7 @@
 %feature("autodoc", "1");
 %{
 #include "fem/complex_fem.hpp"
+#include "fem/dgmassinv.hpp"
 #include "linalg/complex_operator.hpp"
 #include "numpy/arrayobject.h"
 #include "../common/io_stream.hpp"
