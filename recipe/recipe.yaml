@@ -1,5 +1,5 @@
 context:
-  version: 4.9.0.post3
+  version: 4.9.0.post4
 
 package:
   name: pymfem-dgns
@@ -58,11 +58,13 @@ tests:
       python_version: 3.12.*
   - script:
       - python ci/validate_install.py par
+      - python ci/validate_dgmassinverse.py
       - env OMPI_MCA_rmaps_base_oversubscribe=1 mpiexec -n 2 python ci/mpi_smoke.py
       - python ci/inspect_native.py
     files:
       source:
         - ci/validate_install.py
+        - ci/validate_dgmassinverse.py
         - ci/mpi_smoke.py
         - ci/inspect_native.py
 
@@ -78,7 +80,7 @@ about:
     OpenMPI and mpi4py are supplied by Conda-forge.
 
 extra:
-  mfem_commit: 45d44cbc0797ed0109d3c79efdbc42a48d3c906e
+  mfem_commit: 22802ec263f494c4c6ae25fbb767af08c575e37e
   supported_platforms:
     - linux-64
     - osx-arm64
