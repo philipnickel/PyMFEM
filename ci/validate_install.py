@@ -7,8 +7,8 @@ import argparse
 import importlib
 
 
-EXPECTED_VERSION = "4.9.0.post5"
-EXPECTED_MFEM_SHA = "904eaf9ac849b94f77af8e29dba85862369f4af9"
+EXPECTED_VERSION = "4.9.0.post6"
+EXPECTED_MFEM_SHA = "16d5c3e926026a1919e43559c149031872f74aea"
 
 
 def main() -> None:
@@ -25,10 +25,18 @@ def main() -> None:
     required_symbols = (
         "ALEConvectionBoundaryIntegrator",
         "ALEConvectionInteriorIntegrator",
+        "ALEConvectionVolumeIntegrator",
+        "CurlVorticityBoundaryIntegrator",
         "DGMassInverse",
         "DGMassInversePreconditioner",
         "DGDiffusionIntegrator",
         "DGDirichletLFIntegrator",
+        "ElementMeanMagnitudeOperator",
+        "LocalVorticityProjectionOperator",
+        "SIPGeometryPenaltyOperator",
+        "SurfaceKinematicOperator",
+        "SurfaceKinematicOperator2D",
+        "VectorDivDivIntegrator",
         "VectorNormalJumpIntegrator",
     )
     missing = [name for name in required_symbols if not hasattr(mfem, name)]
