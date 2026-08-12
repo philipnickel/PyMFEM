@@ -7,8 +7,8 @@ import argparse
 import importlib
 
 
-EXPECTED_VERSION = "4.9.0.post6"
-EXPECTED_MFEM_SHA = "16d5c3e926026a1919e43559c149031872f74aea"
+EXPECTED_VERSION = "4.9.0.post7"
+EXPECTED_MFEM_SHA = "47e2affc3b24197451ff5ac59e018b9316b4439e"
 
 
 def main() -> None:
@@ -43,6 +43,8 @@ def main() -> None:
     assert not missing, f"missing patched APIs: {missing}"
     assert hasattr(mfem.DGDiffusionIntegrator, "SetPenaltyCoefficient")
     assert hasattr(mfem.DGDirichletLFIntegrator, "SetPenaltyCoefficient")
+    assert hasattr(mfem.SurfaceKinematicOperator, "FaceMult")
+    assert hasattr(mfem.SurfaceKinematicOperator2D, "FaceMult")
 
     coefficient = mfem.ConstantCoefficient(2.0)
     normal_jump = mfem.VectorNormalJumpIntegrator(coefficient)
