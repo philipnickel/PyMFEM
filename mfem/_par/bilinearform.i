@@ -133,6 +133,10 @@ namespace mfem {
     # The native operator retains non-owning space and integration-rule links.
     self._link = (fes_, ir_)
    %}
+%pythonappend FehnALECFLRateOperator::FehnALECFLRateOperator %{
+    # The native operator retains non-owning space and integration-rule links.
+    self._link = (fes_, ir_)
+   %}
 
 } //end of namespace
 

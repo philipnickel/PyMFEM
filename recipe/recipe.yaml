@@ -1,5 +1,5 @@
 context:
-  version: 4.9.0.post7
+  version: 4.9.0.post8
 
 package:
   name: pymfem-dgns
@@ -82,7 +82,7 @@ about:
     OpenMPI and mpi4py are supplied by Conda-forge.
 
 extra:
-  mfem_commit: 47e2affc3b24197451ff5ac59e018b9316b4439e
+  mfem_commit: f96e28c62b596cb97f29a7414d9efa53e6e3051b
   supported_platforms:
     - linux-64
     - osx-arm64

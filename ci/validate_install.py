@@ -7,8 +7,8 @@ import argparse
 import importlib
 
 
-EXPECTED_VERSION = "4.9.0.post7"
-EXPECTED_MFEM_SHA = "47e2affc3b24197451ff5ac59e018b9316b4439e"
+EXPECTED_VERSION = "4.9.0.post8"
+EXPECTED_MFEM_SHA = "f96e28c62b596cb97f29a7414d9efa53e6e3051b"
 
 
 def main() -> None:
@@ -32,6 +32,7 @@ def main() -> None:
         "DGDiffusionIntegrator",
         "DGDirichletLFIntegrator",
         "ElementMeanMagnitudeOperator",
+        "FehnALECFLRateOperator",
         "LocalVorticityProjectionOperator",
         "SIPGeometryPenaltyOperator",
         "SurfaceKinematicOperator",
