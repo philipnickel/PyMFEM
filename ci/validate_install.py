@@ -7,7 +7,7 @@ import argparse
 import importlib
 
 
-EXPECTED_VERSION = "4.9.0.post8"
+EXPECTED_VERSION = "4.9.0.post9"
 EXPECTED_MFEM_SHA = "f96e28c62b596cb97f29a7414d9efa53e6e3051b"
 
 

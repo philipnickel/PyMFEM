@@ -1,5 +1,5 @@
 context:
-  version: 4.9.0.post8
+  version: 4.9.0.post9
 
 package:
   name: pymfem-dgns
@@ -30,7 +30,7 @@ requirements:
     - pkg-config
     - swig 4.4.*
   host:
-    - python 3.12.*
+    - python
     - pip >=25.1
     - setuptools >=80
     - wheel
@@ -42,7 +42,7 @@ requirements:
     - mpi4py 4.1.2.*
     - zlib
   run:
-    - python >=3.12,<3.13
+    - python
     - numpy >=2,<3
     - scipy
     - numba
@@ -55,7 +55,7 @@ tests:
       imports:
         - mfem.par
       pip_check: true
-      python_version: 3.12.*
+      python_version: ${{ python }}.*
   - script:
       - python ci/validate_install.py par
       - python ci/validate_dgmassinverse.py

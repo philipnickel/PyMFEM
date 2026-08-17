@@ -11,11 +11,11 @@ permissions:
 
 env:
   PREFIX_CHANNEL: philipnickel/philipnickel-dgns
-  RELEASE_VERSION: 4.9.0.post8
+  RELEASE_VERSION: 4.9.0.post9
 
 jobs:
   build:
-    name: ${{ matrix.target-platform }} | Python 3.12 | MPI + libCEED
+    name: ${{ matrix.target-platform }} | Python 3.14 | MPI + libCEED
     strategy:
       fail-fast: false
       matrix:
