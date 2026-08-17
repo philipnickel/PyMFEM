@@ -7,8 +7,8 @@ import argparse
 import importlib
 
 
-EXPECTED_VERSION = "4.9.0.post9"
-EXPECTED_MFEM_SHA = "f96e28c62b596cb97f29a7414d9efa53e6e3051b"
+EXPECTED_VERSION = "4.9.0.post10"
+EXPECTED_MFEM_SHA = "57b68b1a28c4e7f647b4b6af0ac6b23cb042c543"
 
 
 def main() -> None:
@@ -42,6 +42,7 @@ def main() -> None:
     )
     missing = [name for name in required_symbols if not hasattr(mfem, name)]
     assert not missing, f"missing patched APIs: {missing}"
+    assert hasattr(mfem.ElementMeanMagnitudeOperator, "ComputeMeasures")
     assert hasattr(mfem.DGDiffusionIntegrator, "SetPenaltyCoefficient")
     assert hasattr(mfem.DGDirichletLFIntegrator, "SetPenaltyCoefficient")
     assert hasattr(mfem.SurfaceKinematicOperator, "FaceMult")

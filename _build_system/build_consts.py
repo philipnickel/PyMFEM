@@ -64,6 +64,7 @@ REPOS = dict(
             release("4.9.0.post7", "47e2affc3b24197451ff5ac59e018b9316b4439e", None),
             release("4.9.0.post8", "f96e28c62b596cb97f29a7414d9efa53e6e3051b", None),
             release("4.9.0.post9", "f96e28c62b596cb97f29a7414d9efa53e6e3051b", None),
+            release("4.9.0.post10", "57b68b1a28c4e7f647b4b6af0ac6b23cb042c543", None),
         ]
     ),
     metis=dict(

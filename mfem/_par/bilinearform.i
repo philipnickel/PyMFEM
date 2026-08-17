@@ -129,6 +129,10 @@ namespace mfem {
     # The adapter is deliberately non-owning.
     self._link = inverse_
    %}
+%pythonappend ElementMeanMagnitudeOperator::ElementMeanMagnitudeOperator %{
+    # The native operator retains non-owning space and integration-rule links.
+    self._link = (fes_, ir_)
+   %}
 %pythonappend SurfaceKinematicOperator2D::SurfaceKinematicOperator2D %{
     # The native operator retains non-owning space and integration-rule links.
     self._link = (fes_, ir_)
