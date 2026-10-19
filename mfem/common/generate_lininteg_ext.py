@@ -1,4 +1,10 @@
-file = "../_ser/lininteg.py"
+from pathlib import Path
+
+
+files = (Path("../_ser/lininteg.py"), Path("../_par/lininteg.py"))
+file = next((path for path in files if path.exists()), None)
+if file is None:
+    raise FileNotFoundError("neither serial nor parallel lininteg.py was generated")
 
 out = ["namespace mfem {"]
 fid = open(file, 'r')
@@ -47,4 +53,3 @@ out.append("}")
 fid = open("lininteg_ext.i", "w")
 fid.write("\n".join(out))
 fid.close()
-

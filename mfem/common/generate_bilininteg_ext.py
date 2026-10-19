@@ -1,4 +1,10 @@
-file = "../_ser/bilininteg.py"
+from pathlib import Path
+
+
+files = (Path("../_ser/bilininteg.py"), Path("../_par/bilininteg.py"))
+file = next((path for path in files if path.exists()), None)
+if file is None:
+    raise FileNotFoundError("neither serial nor parallel bilininteg.py was generated")
 
 out = ["namespace mfem {"]
 fid = open(file, 'r')

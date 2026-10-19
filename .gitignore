@@ -10,6 +10,11 @@ Makefile.local
 setup_local.py
 build
 dist
+.pixi
+external
+mfem/__sha__.py
+mfem/common/existing_mfem_headers.i
+output
 test/*
 !test/*.py
 !test/cpp
