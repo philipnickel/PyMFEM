@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build stock MFEM (plus a static, position-independent GSLIB) into $PREFIX.
 # The feature set mirrors the DGNS solver's Spack spec:
-#   mfem@4.10.0 +mpi +metis +zlib +lapack +mpfr +gslib +threadsafe
+#   mfem@4.10.0 +mpi +metis +zlib +lapack +gslib ~mpfr ~threadsafe
 #               ~libceed ~openmp cxxstd=17 (hypre, CPU only)
 set -euxo pipefail
 
@@ -38,11 +38,10 @@ cmake -S external/mfem -B build-mfem \
   -DMFEM_USE_LAPACK=ON \
   -DBLAS_LIBRARIES="$PREFIX/lib/libblas${SHLIB_EXT}" \
   -DLAPACK_LIBRARIES="$PREFIX/lib/liblapack${SHLIB_EXT}" \
-  -DMFEM_USE_MPFR=ON \
-  -DMPFR_DIR="$PREFIX" \
+  -DMFEM_USE_MPFR=OFF \
   -DMFEM_USE_GSLIB=ON \
   -DGSLIB_DIR="$PREFIX" \
-  -DMFEM_THREAD_SAFE=ON \
+  -DMFEM_THREAD_SAFE=OFF \
   -DMFEM_USE_OPENMP=OFF \
   -DMFEM_USE_CEED=OFF \
   -DMFEM_USE_CUDA=OFF \

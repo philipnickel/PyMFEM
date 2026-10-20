@@ -7,7 +7,7 @@ import argparse
 import importlib
 
 
-EXPECTED_VERSION = "4.10.0.post1"
+EXPECTED_VERSION = "4.10.0.post2"
 # Stock upstream MFEM release tag v4.10 (https://github.com/mfem/mfem).
 EXPECTED_MFEM_SHA = "d964264cdb9a13e94a201b6c236c7721e0c8765f"
 

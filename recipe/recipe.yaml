@@ -1,5 +1,5 @@
 context:
-  version: 4.10.0.post1
+  version: 4.10.0.post2
   mfem_version: 4.10.0
   mfem_tag: v4.10
   mfem_commit: d964264cdb9a13e94a201b6c236c7721e0c8765f
@@ -47,8 +47,6 @@ outputs:
         - openmpi 5.0.10.*
         - hypre 3.2.*
         - metis 5.*
-        - mpfr
-        - gmp
         - zlib
         - libblas
         - liblapack
@@ -56,7 +54,6 @@ outputs:
         - openmpi 5.0.10.*
         - hypre 3.2.*
         - metis 5.*
-        - mpfr
         - zlib
       run_exports:
         - ${{ pin_subpackage('mfem-dgns', exact=True) }}
@@ -75,7 +72,8 @@ outputs:
       - script:
           - grep -q '^#define MFEM_USE_MPI' $PREFIX/include/mfem/config/_config.hpp
           - grep -q '^#define MFEM_USE_GSLIB' $PREFIX/include/mfem/config/_config.hpp
-          - grep -q '^#define MFEM_THREAD_SAFE' $PREFIX/include/mfem/config/_config.hpp
+          - "! grep -q '^#define MFEM_THREAD_SAFE' $PREFIX/include/mfem/config/_config.hpp"
+          - "! grep -q '^#define MFEM_USE_MPFR' $PREFIX/include/mfem/config/_config.hpp"
           - "! grep -q '^#define MFEM_USE_CEED' $PREFIX/include/mfem/config/_config.hpp"
           - cmake -S recipe/test-cmake -B build-consumer -DCMAKE_BUILD_TYPE=Release
           - cmake --build build-consumer
@@ -153,7 +151,7 @@ about:
     Two outputs built from one stock upstream MFEM 4.10 source tree (no patches):
     mfem-dgns (C++ headers, shared libmfem, GSLIB, MFEMConfig.cmake) and
     pymfem-dgns (parallel-only PyMFEM wrapper linked against mfem-dgns).
-    MPI, METIS, zlib, LAPACK, MPFR, GSLIB and thread safety are enabled;
+    MPI, METIS, zlib, LAPACK and GSLIB are enabled; MPFR, thread safety,
     libCEED, OpenMP and GPU backends are not. OpenMPI, mpi4py and HYPRE come
     from Conda-forge.
 

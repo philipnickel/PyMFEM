@@ -5,19 +5,21 @@ PyMFEM wrapper as immutable Conda packages on the public Prefix.dev channel
 `philipnickel/philipnickel-dgns`. The DGNS C++ solver and PyMFEM link the same
 `libmfem`, so one environment carries a single MFEM build.
 
-## Binary contract (`4.10.0.post1`)
+## Binary contract (`4.10.0.post2`)
 
 - Linux x86-64 and macOS ARM64 (minimum macOS 13)
 - CPython 3.14 only
 - CPU only: no CUDA/HIP, no OpenMP, no libCEED
-- OpenMPI 5.0.10, mpi4py 4.1.2, HYPRE 3.2, METIS 5, MPFR, zlib and
-  BLAS/LAPACK from Conda-forge
+- no MPFR (double-precision quadrature points) and no MFEM thread safety
+  (the solver calls MFEM from one thread per MPI rank)
+- OpenMPI 5.0.10, mpi4py 4.1.2, HYPRE 3.2, METIS 5, zlib and BLAS/LAPACK
+  from Conda-forge
 - stock upstream MFEM, tag `v4.10`
   (commit `d964264cdb9a13e94a201b6c236c7721e0c8765f`) from
   `https://github.com/mfem/mfem.git`, with no source patches
 
 MFEM is configured to match the solver's Spack spec
-`mfem@4.10.0 +mpi +metis +zlib +lapack +mpfr +gslib +threadsafe ~libceed
+`mfem@4.10.0 +mpi +metis +zlib +lapack +gslib ~mpfr ~threadsafe ~libceed
 ~openmp cxxstd=17` (with HYPRE), built as shared libraries.
 
 ## Outputs
@@ -39,7 +41,7 @@ source tree:
 ## Building and publishing
 
 Run `pixi run build-conda` to reproduce and test both packages locally.
-Pushing `dgns-v4.10.0.post1` builds both platforms and publishes all four
+Pushing `dgns-v4.10.0.post2` builds both platforms and publishes all four
 packages through `.github/workflows/release_binary.yml`. Manual workflow
 dispatches build without publishing.
 
