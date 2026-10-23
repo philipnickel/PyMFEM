@@ -1,6 +1,6 @@
 [workspace]
 name = "pymfem-dgns-conda"
-version = "4.10.0.post2"
+version = "4.10.0.post3"
 description = "Reproducible builder for the DGNS MFEM and PyMFEM Conda packages"
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-arm64"]

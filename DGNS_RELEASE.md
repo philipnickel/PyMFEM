@@ -5,9 +5,13 @@ PyMFEM wrapper as immutable Conda packages on the public Prefix.dev channel
 `philipnickel/philipnickel-dgns`. The DGNS C++ solver and PyMFEM link the same
 `libmfem`, so one environment carries a single MFEM build.
 
-## Binary contract (`4.10.0.post2`)
+## Binary contract (`4.10.0.post3`)
 
 - Linux x86-64 and macOS ARM64 (minimum macOS 13)
+- MFEM compiled with `-O3` for a CPU baseline: x86-64-v3 (AVX2, FMA; Intel
+  Haswell / AMD Zen and newer) on Linux, Apple M1 or newer on macOS. Older
+  x86 CPUs stop with an illegal instruction; on the DTU cluster
+  `-R "select[avx2]"` keeps jobs on AVX2 nodes.
 - CPython 3.14 only
 - CPU only: no CUDA/HIP, no OpenMP, no libCEED
 - no MPFR (double-precision quadrature points) and no MFEM thread safety
@@ -41,7 +45,7 @@ source tree:
 ## Building and publishing
 
 Run `pixi run build-conda` to reproduce and test both packages locally.
-Pushing `dgns-v4.10.0.post2` builds both platforms and publishes all four
+Pushing `dgns-v4.10.0.post3` builds both platforms and publishes all four
 packages through `.github/workflows/release_binary.yml`. Manual workflow
 dispatches build without publishing.
 

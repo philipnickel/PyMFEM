@@ -1,5 +1,5 @@
 context:
-  version: 4.10.0.post2
+  version: 4.10.0.post3
   mfem_version: 4.10.0
   mfem_tag: v4.10
   mfem_commit: d964264cdb9a13e94a201b6c236c7721e0c8765f

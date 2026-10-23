@@ -17,6 +17,17 @@ make CC="$PREFIX/bin/mpicc" MPI=1 STATIC=1 SHARED=0 CFLAGS="-O2 -fPIC" DESTDIR="
 popd
 
 # ---- MFEM 4.10 (stock upstream source) -------------------------------------
+# Conda-forge's CXXFLAGS carry -O2 and a generic CPU baseline (linux-64:
+# -march=nocona, SSE3 only), which come after CMake's Release -O3 in config.mk
+# and leave the partial-assembly kernels unvectorized for AVX2/FMA. Append -O3
+# and the DGNS CPU baseline so they take precedence: x86-64-v3 (AVX2, FMA;
+# Haswell and newer, every DTU hpc node in use) and Apple M1 or newer.
+case "${target_platform:-}" in
+  linux-64) export CXXFLAGS="${CXXFLAGS:-} -O3 -march=x86-64-v3" ;;
+  osx-arm64) export CXXFLAGS="${CXXFLAGS:-} -O3 -mcpu=apple-m1" ;;
+  *) export CXXFLAGS="${CXXFLAGS:-} -O3" ;;
+esac
+
 cmake -S external/mfem -B build-mfem \
   ${CMAKE_ARGS} \
   -DCMAKE_BUILD_TYPE=Release \
